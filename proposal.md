@@ -6,7 +6,9 @@ This crawler can crawl tens of thousands of apps information from the Xiaomi App
 - [ ] Crawing data from specified url
 - [ ] Persisting data in MongoDB
 - [ ] Crawl more content by following next page links
+
 ### Time Schedule
+
 | Stage | Start  | End | Goals |
 | ------------- | ------------- | ------------- | ------------- |
 | 1 | 07/25/16  | 07/31/16  | Environment setup, Resource Discovery, Plan Discussion, and Proposal Draft Writing |
