@@ -30,5 +30,14 @@ class VkeaSpider(scrapy.Spider):
 
     def parse_app_contens(self, response):
         # print 'in parse_app_contens ---------------------'
+        item = dict()
+        texts = ""
         for sel in response.xpath('//p[re:test(@class,"pslide")]/text()'):
-            print sel.extract().encode('utf-8')
+            # item = containItem()
+            # item = dict()
+            texts += sel.extract().encode('utf-8')
+        name_path = '//div[re:test(@class,"intro-titles")]/h3/text()'
+        for sel in response.xpath(name_path):
+            item['name'] = sel.extract().encode('utf-8')
+        item['details'] = texts
+        yield item
