@@ -16,6 +16,6 @@ class KlvCrawlerPipeline(object):
     def process_item(self, item, spider):
         line = json.dumps(dict(item)) + '\n'
         # print line
-        print 'in process_item of pipeline=================================='
+        # print 'in process_item of pipeline=================================='
         self.file.write(line.decode("unicode_escape"))
         return item
