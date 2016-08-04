@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import json
+import codecs
 
 # Define your item pipelines here
 #
@@ -7,5 +9,13 @@
 
 
 class KlvCrawlerPipeline(object):
+    def __init__(self):
+        self.file = codecs.open('KlvCrawlerPipeline.json',
+                                'wb', encoding='utf-8')
+
     def process_item(self, item, spider):
+        line = json.dumps(dict(item)) + '\n'
+        # print line
+        print 'in process_item of pipeline'
+        self.file.write(line.decode("unicode_escape"))
         return item
