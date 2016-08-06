@@ -46,9 +46,10 @@ COOKIES_ENABLED = False
 
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    'KLV_Crawler.middlewares.MyCustomSpiderMiddleware': 543,
-#}
+SPIDER_MIDDLEWARES = {
+	'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+   # 'KLV_Crawler.middlewares.MyCustomSpiderMiddleware': 543,
+}
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
@@ -88,3 +89,15 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+# Scrapyjs
+WNLOADER_MIDDLEWARES = {
+    # 'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+    'scrapy_splash.SplashCookiesMiddleware': 723,
+    'scrapy_splash.SplashMiddleware': 725,
+    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware':810,
+}
+# DUPEFILTER_CLASS = 'scrapyjs.SplashAwareDupeFilter'
+DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
+HTTPCACHE_STORAGE = 'scrapy_splash.SplashAwareFSCacheStorage'
+SPLASH_URL = 'http://192.168.99.100:32769'
+#'http://192.168.99.103:8050'
