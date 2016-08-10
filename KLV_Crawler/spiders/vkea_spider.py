@@ -96,7 +96,7 @@ class VkeaSpider(scrapy.Spider):
 
     def parse_app_contens(self, response):
         logger.debug("in parse_app_contens")
-        logger.debug( response.url)
+        # logger.debug( response.url)
         item = dict()
         category_name_path = '//div[re:test(@class,"bread-crumb")]/ul/li/a/text()'
         for sel in response.xpath(category_name_path):
@@ -111,10 +111,14 @@ class VkeaSpider(scrapy.Spider):
         name_path = '//div[re:test(@class,"intro-titles")]/h3/text()'
         for sel in response.xpath(name_path):
             item['app_name'] = sel.extract().encode('utf-8')
+        imgs_path = '//div[re:test(@id,"J_thumbnail_wrap")]/img[position()>0]'
+        img_array = list()
+        for sel in response.xpath(imgs_path).extract():
+            img_array.append(sel.split("\"")[1])
         item['app_details'] = texts
+        item['app_imgages'] = img_array
         item['app_detail_url'] = response.url
         yield item
 
-    # def customize_request(self):
 
 
