@@ -1,3 +1,5 @@
 scrapy
 scrapy-splash
-
+# centos 7
+# service-identity
+pymongo
