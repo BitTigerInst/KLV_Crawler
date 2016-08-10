@@ -40,8 +40,8 @@ class VkeaSpider(scrapy.Spider):
         'mongodb://10.118.100.103,10.118.100.104,10.118.100.105/?replicaSet=rideo&ssl=false&readPreference=primary&connectTimeoutMS=10000&socketTimeoutMS=10000&maxPoolSize=500&waitQueueMultiple=2&waitQueueTimeoutMS=3000&w=1'
     )
     # db = connection[settings['MONGODB_DB']]
-    mongodb = self.mongoClient[settings['MONGODB_DB']]
-    collection = self.mongodb[settings['MONGODB_COLLECTION']]
+    mongodb = mongoClient[settings['MONGODB_DB']]
+    collection = mongodb[settings['MONGODB_COLLECTION']]
 
     category_page_url_template = "http://app.xiaomi.com/categotyAllListApi?page=%d&categoryId=%d&pageSize=%d"
     app_detail_url_templae = "http://app.xiaomi.com/details?id=%s"
