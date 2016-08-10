@@ -4,12 +4,15 @@ import logging
 import re
 from KLV_Crawler.items import ProxyItem
 import urllib2, socket
+import thread  
+
 
 socket.setdefaulttimeout(180)
 
 logger = logging.getLogger()
 
 class CnproxySpider(scrapy.Spider):
+    count = 0
     name = "cnproxy"
     allowed_domains = ["cnproxy.com"]
     indexes    = [1,2,3,4,5,6,7,8,9,10]
@@ -67,16 +70,23 @@ class CnproxySpider(scrapy.Spider):
             item['protocol'] = protocols[i]
             item['location'] = locations[i]
             item['port']     = ports[i]
-            items.append(item)
+            # items.append(item)
             # logger.debug(protocols[i] +'://'+addresses[i] +':'+ ports[i] +'@' + locations[i])
             proxyList.append(addresses[i] +':'+ ports[i])
+
+        fp   = open('./proxies.txt','a')
         for item in proxyList:
             # logger.debug(item)
-            if self.is_bad_proxy(item):
-                pass
+            if thread.start_new_thread(self.is_bad_proxy, (item,)):
+                line = item+'\n'
+                fp.write(line)
+                self.count += 1
                 # logger.debug( "Bad Proxy: "+ item)
             else:
                 logger.debug( item+ " is working")
+                self.count += 1
+        if self.count >=len(proxyList):
+            fp.close()
             
 
     def is_bad_proxy(self, pip):    
@@ -88,12 +98,13 @@ class CnproxySpider(scrapy.Spider):
             req=urllib2.Request('http://www.your-domain.com')  # change the url address here
             sock=urllib2.urlopen(req)
         except urllib2.HTTPError, e:        
-            print 'Error code: ', e.code
+            # print 'Error code: ', e.code
             return e.code
         except Exception, detail:
-
-            print "ERROR:", detail
+            # print "ERROR:", detail
             return 1
+        # logger.debug( pip+ " is working")
+
         return 0
 
 

@@ -4,6 +4,7 @@ import sys
 import logging
 import json
 import base64
+import random
 from scrapy.linkextractors import LinkExtractor
 from scrapy_splash import SplashRequest
 from scrapy_splash import SlotPolicy
@@ -13,46 +14,45 @@ sys.setdefaultencoding("utf-8")
 
 logger = logging.getLogger()
 
-script = """
-    function main(splash)
-      # splash:init_cookies(splash.args.cookies)
-      # assert(splash:go{
-      #   splash.args.url,
-      #   headers=splash.args.headers,
-      #   http_method=splash.args.http_method,
-      #   body=splash.args.body,
-      #   })
-      # assert(splash:wait(0.5))
-
-      # local entries = splash:history()
-      # local last_response = entries[#entries].response
-      splash:go("http://www.xiaomi.com")
-      splash:wait(0.5)
-      locat title = splash:evaljs("document.title")
-      return {
-        # url = splash:url(),
-        # headers = last_response.headers,
-        # http_status = last_response.status,
-        # cookies = splash:get_cookies(),
-        # html = splash:html(),
-        title = title
-      }
-    end
-"""
-
 class VkeaSpider(scrapy.Spider):
 
     name = "vkea_xiaomi"
-    download_delay = 5
+    # 已经在setting中设置了download_delay，所以时间间隔会是rando(0.5~1.5*设定值)
+    # download_delay = 3
     allowed_domains = ["xiaomi.com"]
     start_urls = [
         "http://app.xiaomi.com/"
         # "http://app.xiaomi.com/category/16"
     ]
+    user_agents =[
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.125",
+    ]
+    xiaomi_headers = {
+        'accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        'Accept-Language': "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        # "Host": "developer.xiaomi.com",dev
+        # "Refer": "http://app.xiaomi.com",
+        'user-agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.125 "
+        }
+
+
     category_page_url_template = "http://app.xiaomi.com/categotyAllListApi?page=%d&categoryId=%d&pageSize=%d"
     app_detail_url_templae = "http://app.xiaomi.com/details?id=%s"
     category_page_size = 300
     
+    def process_request(self, request, spider):
+        fd = open('./proxy_list.txt','r')
+        data = fd.readlines()
+        fd.close()
+        length = len(data)
+        index = random.randint(0, length -1)
+        item = data[index]
+        request.meta['proxy'] = 'http://' + item
+        self.xiaomi_headers['user-agent'] = user-agent[random.randint(0, len(user_agents) -1)]
+        request.headers = self.xiaomi_headers
+        logger.debug('proxy:' + self.request.meta['proxy'] )
    
     def parse(self, response):
         for sel in response.xpath('//ul[re:test(@class, "category-list")]//li'):
@@ -60,7 +60,7 @@ class VkeaSpider(scrapy.Spider):
             link = sel.xpath('a/@href').extract()
             url = response.urljoin(link[0])
             # print title, link, url
-            yield scrapy.Request(url, callback=self.parse_category_contents)
+            yield scrapy.Request(url, callback=self.parse_category_contents, headers=self.xiaomi_headers)
 
     def parse_category_contents(self, response):
         # item_count = 0
@@ -94,24 +94,6 @@ class VkeaSpider(scrapy.Spider):
         if data_size >= self.category_page_size:
             yield scrapy.Request(url, callback=self.parse_category_contents_json)
 
-    # def parse_category_contents(self, response):
-    #     for sel in response.xpath('//ul[re:test(@id, "all-applist")]//li'):
-    #         link = sel.xpath('a/@href').extract()
-    #         url = response.urljoin(link[0])
-    #         yield scrapy.Request(url, callback=self.parse_app_contens)
-    #     pages = "//div[re:test(@class, 'main-con')]"
-    #     cur_page = "/span[re:test(@class, 'current')]"
-    #     next_page = "/a[re:test(@class, 'next')]"
-    #     print pages + cur_page
-    #     cur_page_num = response.xpath(pages).extract()
-    #     print cur_page_num
-        # next_page_num = int(cur_page_num[0]) + 1
-
-        # next_page_but = response.xpath(pages + next_page)
-        # if next_page_but is not None:
-            #  url = response.urljoin(next_page_num)
-            # print url
-
     def parse_app_contens(self, response):
         logger.debug("in parse_app_contens")
         logger.debug( response.url)
@@ -133,48 +115,6 @@ class VkeaSpider(scrapy.Spider):
         item['app_detail_url'] = response.url
         yield item
 
+    # def customize_request(self):
 
-class DmozSpider(scrapy.Spider):
-    name = "dmoz"
-    allowed_domains = ["xiaomi.com"]
-    start_urls = ['http://app.xiaomi.com/category/26']
 
-    # http_user = 'splash-user'
-    # http_pass = 'splash-password'
-
-    def start_requests(self):
-        for url in self.start_urls:
-            yield scrapy.Request(url, self.parse_result, meta={
-            'splash': {
-                'args': {
-                    'lua_source': script,
-                    'endpoint':execute
-                }
-            }
-        })
-
-    def parse_result(self, response):
-        data = json.loads(response.body_as_unicode())
-        # body = data['html']
-        # png_bytes = base64.b64decode(data['png'])
-        # print response.body_as_unicode()
-        # print response
-
-    def parse(self, response):
-        le = LinkExtractor()
-        for link in le.extract_links(response):
-            yield SplashRequest(
-                link.url,
-                self.parse_link,
-                endpoint='render.json',
-                args={
-                    'har': 1,
-                    'html': 1,
-                }
-            )
-
-    def parse_link(self, response):
-        # print("PARSED", response.real_url, response.url)
-        print(response.css("title").extract())
-        # print(response.data["har"]["log"]["pages"])
-        print(response.headers.get('Content-Type'))
