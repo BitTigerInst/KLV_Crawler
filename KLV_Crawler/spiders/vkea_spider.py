@@ -127,7 +127,7 @@ class VkeaSpider(scrapy.Spider):
         yield item
 
     def search_app_id(self, app_id):
-        result = seft.collection.find({},{'_id':app_id})
+        result = self.collection.find({},{'_id':app_id})
         for item in result:
             return 1
         return 0
