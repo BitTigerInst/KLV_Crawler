@@ -41,7 +41,7 @@ class MongoDBPipeline(object):
     def save_data(self, item):
         try:
             item["_id"] = item[u'app_id'].lower()
-            self.collection.update({'_id': item["app_id"]}, {"$set": item}, upsert=True)
+            self.collection.update({'_id': item["_id"]}, {"$set": item}, upsert=True)
         except KeyError as e:
             logger.error(sys._getframe().f_code.co_name + item)
 
