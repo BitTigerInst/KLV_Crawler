@@ -69,7 +69,7 @@ SPIDER_MIDDLEWARES = {
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    # 'KLV_Crawler.pipelines.KlvCrawlerPipeline': 300
+    'KLV_Crawler.pipelines.KlvCrawlerPipeline': 3800
     'KLV_Crawler.pipelines.MongoDBPipeline': 300
 }
 
