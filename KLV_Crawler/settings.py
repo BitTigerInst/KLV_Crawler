@@ -20,6 +20,8 @@ NEWSPIDER_MODULE = 'KLV_Crawler.spiders'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
+MONGODB_DB = "xiaomi"
+MONGODB_COLLECTION = "apps"
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 CONCURRENT_REQUESTS = 100
@@ -67,7 +69,8 @@ SPIDER_MIDDLEWARES = {
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'KLV_Crawler.pipelines.KlvCrawlerPipeline': 300
+    # 'KLV_Crawler.pipelines.KlvCrawlerPipeline': 300
+    'KLV_Crawler.pipelines.MongoDBPipeline'
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

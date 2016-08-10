@@ -2,13 +2,14 @@
 import json
 import codecs
 import pymongo
-
+import logging
 from scrapy.conf import settings
 
 # Define your item pipelines here
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
+logger = logging.getLogger()
 
 
 class KlvCrawlerPipeline(object):
@@ -25,33 +26,22 @@ class KlvCrawlerPipeline(object):
 
 
 class MongoDBPipeline(object):
-
     def __init__(self):
-        connection = pymongo.MongoClient(
+        mongoClient = pymongo.MongoClient(
 	        'mongodb://10.118.100.103,10.118.100.104,10.118.100.105/?replicaSet=rideo&ssl=false&readPreference=primary&connectTimeoutMS=10000&socketTimeoutMS=10000&maxPoolSize=500&waitQueueMultiple=2&waitQueueTimeoutMS=3000&w=1')
         )
-        db = connection[settings['MONGODB_DB']]
-        self.collection = db[settings['MONGODB_COLLECTION']]
+        # db = connection[settings['MONGODB_DB']]
+        self.mongodb = mongoClient[settings['MONGODB_DB']]
+        self.collection = self.mongodb[settings['MONGODB_COLLECTION']]
 
     def process_item(self, item, spider):
-        valid = True
-        for data in item:
-            if not data:
-                valid = False
-                raise DropItem("Missing {0}!".format(data))
-        if valid:
-            self.collection.insert(dict(item))
-            log.msg("Question added to MongoDB database!",
-                    level=log.DEBUG, spider=spider)
+        save_data(item)
         return item
 
-def save_data(data_list, table_name):
-    table = mongo_db[table_name]
-    try:
-        # data_record = data_list["results"]
-        for item in data_list:
-            item["_id"] = item[u'title'].lower()
-            table.update({'_id': item["_id"]}, {"$set": item}, upsert=True)
-    except KeyError as e:
-        logger.error(sys._getframe().f_code.co_name + item)
+    def save_data(item):
+        try:
+            item["_id"] = item[u'app_detail_url'].lower()
+            self.collection.update({'_id': item["_id"]}, {"$set": item}, upsert=True)
+        except KeyError as e:
+            logger.error(sys._getframe().f_code.co_name + item)
 
