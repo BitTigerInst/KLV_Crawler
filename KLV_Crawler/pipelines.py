@@ -44,3 +44,14 @@ class MongoDBPipeline(object):
             log.msg("Question added to MongoDB database!",
                     level=log.DEBUG, spider=spider)
         return item
+
+def save_data(data_list, table_name):
+    table = mongo_db[table_name]
+    try:
+        # data_record = data_list["results"]
+        for item in data_list:
+            item["_id"] = item[u'title'].lower()
+            table.update({'_id': item["_id"]}, {"$set": item}, upsert=True)
+    except KeyError as e:
+        logger.error(sys._getframe().f_code.co_name + item)
+
