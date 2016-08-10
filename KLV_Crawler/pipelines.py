@@ -38,7 +38,7 @@ class MongoDBPipeline(object):
         self.save_data(item)
         return item
 
-    def save_data(item):
+    def save_data(self, item):
         try:
             item["_id"] = item[u'app_id'].lower()
             self.collection.update({'_id': item["app_id"]}, {"$set": item}, upsert=True)
