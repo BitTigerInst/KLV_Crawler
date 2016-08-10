@@ -28,7 +28,7 @@ class KlvCrawlerPipeline(object):
 class MongoDBPipeline(object):
     def __init__(self):
         mongoClient = pymongo.MongoClient(
-	        'mongodb://10.118.100.103,10.118.100.104,10.118.100.105/?replicaSet=rideo&ssl=false&readPreference=primary&connectTimeoutMS=10000&socketTimeoutMS=10000&maxPoolSize=500&waitQueueMultiple=2&waitQueueTimeoutMS=3000&w=1')
+	        'mongodb://10.118.100.103,10.118.100.104,10.118.100.105/?replicaSet=rideo&ssl=false&readPreference=primary&connectTimeoutMS=10000&socketTimeoutMS=10000&maxPoolSize=500&waitQueueMultiple=2&waitQueueTimeoutMS=3000&w=1'
         )
         # db = connection[settings['MONGODB_DB']]
         self.mongodb = mongoClient[settings['MONGODB_DB']]
