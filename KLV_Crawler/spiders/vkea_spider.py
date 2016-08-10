@@ -5,9 +5,8 @@ import logging
 import json
 import base64
 import random
-from scrapy.linkextractors import LinkExtractor
-from scrapy_splash import SplashRequest
-from scrapy_splash import SlotPolicy
+import pymongo
+from scrapy.conf import settings
 import re
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -37,6 +36,12 @@ class VkeaSpider(scrapy.Spider):
         'user-agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.125 "
         }
 
+    mongoClient = pymongo.MongoClient(
+        'mongodb://10.118.100.103,10.118.100.104,10.118.100.105/?replicaSet=rideo&ssl=false&readPreference=primary&connectTimeoutMS=10000&socketTimeoutMS=10000&maxPoolSize=500&waitQueueMultiple=2&waitQueueTimeoutMS=3000&w=1'
+    )
+    # db = connection[settings['MONGODB_DB']]
+    mongodb = self.mongoClient[settings['MONGODB_DB']]
+    collection = self.mongodb[settings['MONGODB_COLLECTION']]
 
     category_page_url_template = "http://app.xiaomi.com/categotyAllListApi?page=%d&categoryId=%d&pageSize=%d"
     app_detail_url_templae = "http://app.xiaomi.com/details?id=%s"
@@ -86,7 +91,8 @@ class VkeaSpider(scrapy.Spider):
         data_list = json_obj["data"]
         data_size = len(data_list)
         for item in data_list:
-            yield scrapy.Request(self.app_detail_url_templae%(item["packageName"]), callback=self.parse_app_contens)
+            if self.search_app_id(item["packageName"]) == 0:
+                yield scrapy.Request(self.app_detail_url_templae%(item["packageName"]), callback=self.parse_app_contens)
 
         pageId = int ((response.url.split('page=')[-1].split('&categoryId')[0]))+1
         page_param = 'page=' + str(pageId)+'&'
@@ -119,6 +125,13 @@ class VkeaSpider(scrapy.Spider):
         item['app_imgages'] = img_array
         item['app_detail_url'] = response.url
         yield item
+
+    def search_app_id(self, app_id):
+        result = seft.collection.find({},{'_id':app_id})
+        for item in result:
+            return 1
+        return 0
+
 
 
 

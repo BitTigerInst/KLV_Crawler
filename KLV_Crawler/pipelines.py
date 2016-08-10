@@ -35,13 +35,13 @@ class MongoDBPipeline(object):
         self.collection = self.mongodb[settings['MONGODB_COLLECTION']]
 
     def process_item(self, item, spider):
-        save_data(item)
+        self.save_data(item)
         return item
 
     def save_data(item):
         try:
-            item["_id"] = item[u'app_detail_url'].lower()
-            self.collection.update({'_id': item["_id"]}, {"$set": item}, upsert=True)
+            item["_id"] = item[u'app_id'].lower()
+            self.collection.update({'_id': item["app_id"]}, {"$set": item}, upsert=True)
         except KeyError as e:
             logger.error(sys._getframe().f_code.co_name + item)
 
