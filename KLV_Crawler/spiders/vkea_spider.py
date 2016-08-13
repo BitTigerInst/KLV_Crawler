@@ -103,7 +103,7 @@ class VkeaSpider(scrapy.Spider):
         page_param = 'page=' + str(pageId)+'&'
         url = re.sub('(page=[0-9]*?&)',page_param,response.url)
         if data_size >= self.category_page_size:
-            yield scrapy.Request(url, callback=self.parse_category_contents_json)
+            yield scrapy.Request(url, callback=self.parse)
 
     def parse_app_contens(self, response):
         # logger.debug("in parse_app_contens")
