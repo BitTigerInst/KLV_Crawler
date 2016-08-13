@@ -20,9 +20,12 @@ class VkeaSpider(scrapy.Spider):
     # download_delay = 3
     allowed_domains = ["xiaomi.com"]
     start_urls = [
-        "http://app.xiaomi.com/"
+        # "http://app.xiaomi.com/"
         # "http://app.xiaomi.com/category/16"
     ]
+     for i in indexes:
+        url = 'http://app.xiaomi.com/categotyAllListApi?page=0&categoryId=%d&pageSize=1000' % i
+        start_urls.append(url) 
     user_agents =[
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36",
         "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.125",
@@ -59,13 +62,13 @@ class VkeaSpider(scrapy.Spider):
         request.headers = self.xiaomi_headers
         logger.debug('proxy:' + self.request.meta['proxy'] )
    
-    def parse(self, response):
-        for sel in response.xpath('//ul[re:test(@class, "category-list")]//li'):
-            # title = sel.xpath('a/text()').extract()
-            link = sel.xpath('a/@href').extract()
-            url = response.urljoin(link[0])
-            # print title, link, url
-            yield scrapy.Request(url, callback=self.parse_category_contents, headers=self.xiaomi_headers)
+    # def parse(self, response):
+    #     for sel in response.xpath('//ul[re:test(@class, "category-list")]//li'):
+    #         # title = sel.xpath('a/text()').extract()
+    #         link = sel.xpath('a/@href').extract()
+    #         url = response.urljoin(link[0])
+    #         # print title, link, url
+    #         yield scrapy.Request(url, callback=self.parse_category_contents, headers=self.xiaomi_headers)
 
     def parse_category_contents(self, response):
         # item_count = 0
@@ -81,8 +84,10 @@ class VkeaSpider(scrapy.Spider):
         yield scrapy.Request(url, callback=self.parse_category_contents_json)
 
 
-    def parse_category_contents_json(self, response):
-        logger.debug("in parse_category_contents_json")
+    # def parse_category_contents_json(self, response):
+
+    def parse(self, response):
+        # logger.debug("in parse_category_contents_json")
         logger.debug( response.url)
         unicode_body = response.body_as_unicode()
         json_obj = json.loads(unicode_body, 'utf-8')
@@ -101,7 +106,7 @@ class VkeaSpider(scrapy.Spider):
             yield scrapy.Request(url, callback=self.parse_category_contents_json)
 
     def parse_app_contens(self, response):
-        logger.debug("in parse_app_contens")
+        # logger.debug("in parse_app_contens")
         # logger.debug( response.url)
         item = dict()
         category_name_path = '//div[re:test(@class,"bread-crumb")]/ul/li/a/text()'
