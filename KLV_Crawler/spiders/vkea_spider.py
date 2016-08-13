@@ -23,7 +23,7 @@ class VkeaSpider(scrapy.Spider):
         # "http://app.xiaomi.com/"
         # "http://app.xiaomi.com/category/16"
     ]
-     for i in indexes:
+    for i in indexes:
         url = 'http://app.xiaomi.com/categotyAllListApi?page=0&categoryId=%d&pageSize=1000' % i
         start_urls.append(url) 
     user_agents =[
