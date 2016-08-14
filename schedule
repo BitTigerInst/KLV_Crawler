@@ -1,0 +1,6 @@
+#! /bin/bash
+source ~/klv/bin/activate
+
+cd /root/Documents/KLV_Crawler
+scrapy crawl cnproxy
+scrapy crawl vkea_xiaomi
