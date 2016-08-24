@@ -3,9 +3,9 @@
 This crawler can crawl tens of thousands of apps information from the Xiaomi App Store, and save them into the MongoDB. It is based on Python + Scrapy. 
 ## Plan
 ### Todo List
-- [ ] Crawing data from specified url
-- [ ] Persisting data in MongoDB
-- [ ] Crawl more content by following next page links
+- [x] Crawing data from specified url
+- [x] Persisting data in MongoDB
+- [x] Crawl more content by following next page links
 
 ### Time Schedule
 
@@ -16,11 +16,11 @@ This crawler can crawl tens of thousands of apps information from the Xiaomi App
 | 3 | 08/08/16  | 08/14/16  | Persistent layer setup, Multi-thread & link analysis study and Document writing  |
 | 4 | 08/15/16  | 08/21/16  | Auto crawl function implementation and Document writing  |
 | 5 | 08/23/16  | 08/28/16  | User Manual Writing and Presentation Making  |
-# Resource
+## Resource
 
-# License
+## License
 See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
-# Project 	Information
+## Project 	Information
 - category: big data
 - team: KLV Team
 - description: Crawling information from Xiaomi APP store.
