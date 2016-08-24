@@ -24,4 +24,4 @@ See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
 - category: big data
 - team: KLV Team
 - description: Crawling information from Xiaomi APP store.
-- stack: pythong, scrapy, mongodb
+- stack: python, scrapy, mongodb
