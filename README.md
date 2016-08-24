@@ -48,3 +48,7 @@ scrapy crawl vkea_xiaomi
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Project Information
+- category: big data
+- team: KLV Team
+- description: Crawling information from Xiaomi APP store.
+- stack: pythong, scrapy, mongodb
